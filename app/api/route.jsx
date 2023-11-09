@@ -23,6 +23,26 @@ export async function GETCities() {
   }
 }
 
+export async function GETCity(cityName) {
+  const url = `${GEO_API_URL}/cities`;
+
+  const options = {
+    method: "GET",
+    headers: headers,
+    params: {
+      namePrefix: cityName,
+    },
+  };
+
+  try {
+    const response = await fetch(url, options);
+    const result = await response.text();
+    return JSON.parse(result).data;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
 // This is a function that gets the distance between two cities.
 export async function GetDistanceBetweenTwoCities(cityID) {
   const url = `${GEO_API_URL}/cities/${cityID}/distance`;

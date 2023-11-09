@@ -4,11 +4,11 @@ import Link from "next/link";
 const Navbar = () => {
   return (
     <nav className="navbar bg-base-200 justify-between">
-      <div>
-        <a className="btn btn-ghost normal-case text-xl">
+      <h1>
+        <a className="btn btn-ghost normal-case text-xl bg-gradient-TS bg-clip-text title-fill-color">
           Sopra Next.JS project
         </a>
-      </div>
+      </h1>
 
       <ul>
         <li className="m-2 p-2">
