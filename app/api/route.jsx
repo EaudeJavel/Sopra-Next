@@ -1,3 +1,4 @@
+import axios from "axios";
 export const GEO_API_URL = "https://wft-geo-db.p.rapidapi.com/v1/geo";
 
 const headers = {
@@ -20,6 +21,26 @@ export async function GETCities() {
     return JSON.parse(result).data;
   } catch (error) {
     console.error(error);
+  }
+}
+
+export async function GETFrenchCities(search) {
+  const url = `${GEO_API_URL}/cities`;
+
+  const options = {
+    method: "GET",
+    url: url,
+    params: { countryIds: "FR", namePrefix: search },
+    headers: headers,
+    limit: "20",
+  };
+
+  try {
+    const response = await axios.request(options);
+    return response.data.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
   }
 }
 
