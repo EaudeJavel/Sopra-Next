@@ -1,6 +1,7 @@
 "use client";
 import Navbar from "../components/navbar";
 import SearchForm from "../components/searchForm";
+import CityItem from "../components/CityItem";
 import { GETFrenchCities } from "../api/route";
 import { useState, useCallback } from "react";
 import _ from "lodash";
@@ -30,6 +31,7 @@ export default function Home() {
     []
   );
 
+  // TODO: improve this search feature, so it does not fetch on every key stroke
   const handleSearchChange = (search) => {
     fetchCities(search);
   };
@@ -53,7 +55,7 @@ export default function Home() {
         ) : cities.length > 0 ? (
           <ul>
             {cities.map((city) => (
-              <li key={city.id}>{city.name}</li>
+              <CityItem key={city.id} city={city}></CityItem>
             ))}
           </ul>
         ) : (

@@ -16,9 +16,8 @@ export async function GETCities() {
   };
 
   try {
-    const response = await fetch(url, options);
-    const result = await response.text();
-    return JSON.parse(result).data;
+    const response = await axios.request(options);
+    return response.data.data;
   } catch (error) {
     console.error(error);
   }
@@ -44,21 +43,18 @@ export async function GETFrenchCities(search) {
   }
 }
 
-export async function GETCity(cityName) {
-  const url = `${GEO_API_URL}/cities`;
+export async function GETcityDetails(cityID) {
+  const url = `${GEO_API_URL}/cities/${cityID}`;
 
   const options = {
     method: "GET",
+    url: url,
     headers: headers,
-    params: {
-      namePrefix: cityName,
-    },
   };
 
   try {
-    const response = await fetch(url, options);
-    const result = await response.text();
-    return JSON.parse(result).data;
+    const response = await axios.request(options);
+    return response.data.data;
   } catch (error) {
     console.error(error);
   }
