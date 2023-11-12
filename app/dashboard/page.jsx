@@ -1,66 +1,97 @@
 "use client";
-import Navbar from "../components/navbar";
-import SearchForm from "../components/searchForm";
-import CityItem from "../components/CityItem";
+import { useState, useEffect } from "react";
 import { GETFrenchCities } from "../api/route";
-import { useState, useCallback } from "react";
-import _ from "lodash";
+import Navbar from "../components/navbar";
+import CityItem from "../components/CityItem";
+import SearchForm from "../components/searchForm";
+import SortCities from "../components/sort";
 
 export default function Home() {
+  const [isLoading, setIsLoading] = useState(false);
   const [cities, setCities] = useState([]);
-  const [isFetching, setIsFetching] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const citiesPerPage = 1;
 
-  // Debounced function to fetch cities based on search input
-  const fetchCities = useCallback(
-    _.debounce(async (search) => {
-      if (!search) {
-        setCities([]);
-        setIsFetching(false);
-        return;
-      }
+  const handleSortChange = (sortOption) => {
+    const sortedCities = [...cities];
 
-      setIsFetching(true);
+    switch (sortOption) {
+      case "+name":
+        sortedCities.sort((a, b) => a.name.localeCompare(b.name));
+        break;
+      case "-population":
+        sortedCities.sort((a, b) => b.population - a.population);
+        break;
+      case "+population":
+        sortedCities.sort((a, b) => a.population - b.population);
+        break;
+    }
+
+    setCities(sortedCities);
+  };
+
+  useEffect(() => {
+    const fetchInitialCities = async () => {
+      setIsLoading(true);
       try {
-        const result = await GETFrenchCities(search);
+        const result = await GETFrenchCities("");
         setCities(result);
       } catch (error) {
         console.error("Failed to fetch cities:", error);
+      } finally {
+        setIsLoading(false);
       }
-      setIsFetching(false);
-    }, 500),
-    []
-  );
+    };
 
-  // TODO: improve this search feature, so it does not fetch on every key stroke
-  const handleSearchChange = (search) => {
-    fetchCities(search);
+    fetchInitialCities();
+  }, []);
+
+  const handleSearchResult = async (searchQuery) => {
+    try {
+      const result = await GETFrenchCities(searchQuery);
+      setCities(result);
+      setCurrentPage(1); // Reset to first page after new search
+    } catch (error) {
+      console.error("Failed to fetch cities:", error);
+    }
   };
 
-  // Placeholder component
-  const Placeholder = () => (
-    <div>
-      <p>Type in the search bar to list French cities...</p>
-    </div>
-  );
+  // Function to change page
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+  // Get current cities for pagination
+  const indexOfLastCity = currentPage * citiesPerPage;
+  const indexOfFirstCity = indexOfLastCity - citiesPerPage;
+  const currentCities = cities.slice(indexOfFirstCity, indexOfLastCity);
 
   return (
     <main className="h-screen bg-base-100">
       <Navbar />
-      <h1>Home</h1>
 
-      <div>
-        <SearchForm onSearchChange={handleSearchChange} />
-        {isFetching ? (
-          <div>Loading...</div>
-        ) : cities.length > 0 ? (
-          <ul>
-            {cities.map((city) => (
-              <CityItem key={city.id} city={city}></CityItem>
-            ))}
-          </ul>
-        ) : (
-          <Placeholder />
-        )}
+      <div className="container mx-auto flex flex-col justify-center items-center">
+        <SearchForm onSearchChange={handleSearchResult} />
+        <SortCities onSortChange={handleSortChange} />
+        <ul className="w-full py-8">
+          {isLoading ? (
+            <p>Loading cities...</p>
+          ) : cities.length > 0 ? (
+            currentCities.map((city) => <CityItem key={city.id} city={city} />)
+          ) : (
+            <p>No cities found.</p>
+          )}
+        </ul>
+
+        {/* Pagination Controls */}
+        <div>
+          {Array.from(
+            { length: Math.ceil(cities.length / citiesPerPage) },
+            (_, i) => i + 1
+          ).map((number) => (
+            <button key={number} onClick={() => paginate(number)}>
+              {number}
+            </button>
+          ))}
+        </div>
       </div>
     </main>
   );

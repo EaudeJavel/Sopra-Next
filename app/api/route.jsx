@@ -23,22 +23,23 @@ export async function GETCities() {
   }
 }
 
-export async function GETFrenchCities(search) {
+export async function GETFrenchCities(search, sort = "+population") {
   const url = `${GEO_API_URL}/cities`;
 
   const options = {
     method: "GET",
     url: url,
-    params: { countryIds: "FR", namePrefix: search },
+    params: { countryIds: "FR", namePrefix: search, sort: sort },
     headers: headers,
-    limit: "20",
+    limit: "10",
   };
+
+  console.log(options);
 
   try {
     const response = await axios.request(options);
     return response.data.data;
   } catch (error) {
-    console.error(error);
     throw error;
   }
 }

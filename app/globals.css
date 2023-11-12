@@ -29,3 +29,24 @@ body {
 .title-fill-color {
   -webkit-text-fill-color: transparent;
 }
+
+.custom-link-pseudo::after {
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 1px;
+  bottom: -5px;
+  left: 0;
+  background: linear-gradient(
+    315.38deg,
+    #fd13ee 0.95%,
+    #fd5e84 51.19%,
+    #fec038 102.55%
+  );
+  transition: width 0.3s ease;
+  pointer-events: none;
+}
+
+.custom-link-pseudo:hover.custom-link-pseudo::after {
+  width: 100%;
+}

@@ -5,16 +5,15 @@ const SearchForm = ({ onSearchChange }) => {
 
   const handleSearchResult = (e) => {
     setSearch(e.target.value);
-    // pass data here
     onSearchChange(e.target.value);
   };
 
   return (
     <form className="form-control">
       <input
-        className="input input-bordered w-full max-w-xs"
+        className="input input-bordered max-w-md"
         type="text"
-        placeholder="Type a location here"
+        placeholder="Rechercher"
         value={search}
         onChange={handleSearchResult}
       />
